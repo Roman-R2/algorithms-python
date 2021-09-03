@@ -7,7 +7,7 @@ even_digits_count = 0
 odd_digits_count = 0
 
 try:
-    number = int(input("Введите первое число: "))
+    number = int(input("Введите натуральное число: "))
 
     str_int = str(number)
 
