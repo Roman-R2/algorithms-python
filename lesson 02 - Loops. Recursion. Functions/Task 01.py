@@ -14,7 +14,7 @@ string_for_exit = '0'
 
 while True:
     try:
-        print("--------------------------------->")
+        print("-------------------------------->")
         int_1 = int(input("Введите первое число: "))
         int_2 = int(input("Введите второе число: "))
         operation = str(input(f"Введите знак операции {supported_operations} или '{string_for_exit}' для "
