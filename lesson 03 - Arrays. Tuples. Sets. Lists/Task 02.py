@@ -5,7 +5,6 @@
 т.к. именно в этих позициях первого массива стоят четные числа.
 """
 
-# Чушь какая-то с примером в описании задачи
 some_list = [8, 3, 15, 6, 4, 2]
 
-print([x for x in some_list if some_list.index(x) % 2 == 0])
+print([some_list.index(x) for x in some_list if x % 2 == 0])
