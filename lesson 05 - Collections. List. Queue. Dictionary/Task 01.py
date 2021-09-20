@@ -35,16 +35,17 @@ if __name__ == '__main__':
     for company in range(1, count + 1):
         print(f"-----> {company} предприятие: ")
         name = str(input("Введите наименование предприятия: "))
-        profit_for_1_quarter = float(input("Введите прибыль за первый квартал: "))
-        profit_for_2_quarter = float(input("Введите прибыль за второй квартал: "))
-        profit_for_3_quarter = float(input("Введите прибыль за третий квартал: "))
-        profit_for_4_quarter = float(input("Введите прибыль за четвертый квартал: "))
-        annual_profit = profit_for_1_quarter + profit_for_2_quarter + profit_for_3_quarter + profit_for_4_quarter
+        annual_profit = 0
+        profit_four_quarter = []
+        for quarter in range(1, 5):
+            profit_for_this_quarter = float(input(f"Введите прибыль за {quarter} квартал: "))
+            profit_four_quarter.append(profit_for_this_quarter)
+            annual_profit += profit_for_this_quarter
         company_dict.update({name: Company(
-            profit_for_1_quarter,
-            profit_for_2_quarter,
-            profit_for_3_quarter,
-            profit_for_4_quarter,
+            profit_four_quarter[0],
+            profit_four_quarter[1],
+            profit_four_quarter[2],
+            profit_four_quarter[3],
             annual_profit
         )
         })
