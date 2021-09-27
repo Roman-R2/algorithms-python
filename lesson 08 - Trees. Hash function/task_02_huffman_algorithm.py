@@ -4,30 +4,64 @@
 from collections import Counter
 
 
-# В данном случае узел - это элемент, у которого всегля есть левый и правий узел или лист
 class HuffmanNode:
-    def __init__(self, left, right, frequency):
-        self.left = left
-        self.right = right
-        self.frequency = frequency
-        self.data = 'not_leaf'
+    def __init__(self, name=None, value=None):
+        self.name = name
+        self.value = value
+        self.lchild = None
+        self.rchild = None
 
 
-class HuffmanAlgorithm:
-    def __init__(self, string):
-        if len(string) < 3:
-            self.error(f"Нет смысла использовать алгоритм Хаффмана с длиной строки {len(string)}")
-        else:
-            self.string = string
-            self.get_code_table()
-            self.code_dict = {}
+# Создать дерево Хаффмана
+class HuffmanTree(object):
+    # По идее дерева Хаффмана: на основе узла построить дерево Хаффмана в обратном порядке
+    def __init__(self, message_for_code):
+        self.code_dict = {}
+        self.code_string = ""
+        self.message_for_code = message_for_code
+        self.frequency_dict = self.get_string_frequency(message_for_code)
+        self.Leaf = [HuffmanNode(k, v) for k, v in self.frequency_dict.items()]
+        while len(self.Leaf) != 1:
+            self.Leaf.sort(key=lambda node: node.value, reverse=True)
+            n = HuffmanNode(value=(self.Leaf[-1].value + self.Leaf[-2].value))
+            n.lchild = self.Leaf.pop(-1)
+            n.rchild = self.Leaf.pop(-1)
+            self.Leaf.append(n)
+        self.root = self.Leaf[0]
+        self.Buffer = list(range(10))
 
-    def error(self, message) -> None:
-        print(f"------------------------\n{self.__class__} : {message}\n------------------------\n")
+    def hu_generate(self, huffman_tree, length):
+        node = huffman_tree
+        if not node:
+            return
+        elif node.name:
+            t_code = ''
+            for i in range(length):
+                t_code += f"{self.Buffer[i]}"
+            self.code_dict.update({node.name: t_code})
+            return
+        self.Buffer[length] = 0
+        self.hu_generate(node.lchild, length + 1)
+        self.Buffer[length] = 1
+        self.hu_generate(node.rchild, length + 1)
 
-    def get_string_frequency(self) -> dict:
-        char_frequency = dict(Counter(self.string))
-        char_frequency = self.sort_frequency_dict(char_frequency)
+    def get_code(self):
+        self.hu_generate(self.root, 0)
+        self._coding()
+        self.show_coding_details()
+
+    def _coding(self):
+        for char in self.message_for_code:
+            self.code_string += self.code_dict.get(char)
+
+    def show_coding_details(self):
+        print(f"Исходная строка: {self.message_for_code}")
+        print(f"Частота вхождения символов в строку: {self.frequency_dict}")
+        print(f"Словарь кодирования: {self.code_dict}")
+        print(f"Закодированная строка: {self.code_string}")
+
+    def get_string_frequency(self, string) -> dict:
+        char_frequency = dict(Counter(string))
         return char_frequency
 
     def sort_frequency_dict(self, frequency):
@@ -38,47 +72,9 @@ class HuffmanAlgorithm:
         """
         return dict(sorted(frequency.items(), key=lambda item: item[1], reverse=True))
 
-    def create_bst(self):
-        frequency = self.get_string_frequency()
-        print(frequency)
-        # Если строка состояла только из одного символа
-        if len(frequency) < 2:
-            self.error(f"С отдим символьм дерево не построить.")
-            return None
-        huffman_node = None
-        while len(frequency) > 1:
-            last_1 = frequency.popitem()
-            last_2 = frequency.popitem()
-            huffman_node = HuffmanNode(last_2, last_1, (last_1[1] + last_2[1]))
-            frequency.update({huffman_node: (last_2[1] + last_1[1])})
-            frequency = self.sort_frequency_dict(frequency)
-        return huffman_node
-
-    def get_code_table(self):
-        huffman_bsd = self.create_bst()
-        print(huffman_bsd.left[0])
-        if not huffman_bsd:
-            return None
-        else:
-            code_table = self._get_code_table(huffman_bsd, "0", "1")
-        print(code_table)
-        return code_table
-
-    def _get_code_table(self, huffman_bsd, l_code: str, r_code: str):
-        if isinstance(huffman_bsd.left[0], HuffmanNode):
-            self._get_code_table(huffman_bsd.left[0], l_code+"0", r_code+"0")
-        else:
-            self.code_dict.update({huffman_bsd.left[0]: l_code})
-        if isinstance(huffman_bsd.right[0], HuffmanNode):
-            self._get_code_table(huffman_bsd.right[0], f"{l_code}1", f"{r_code}1")
-        else:
-            self.code_dict.update({huffman_bsd.left[0]: r_code})
-        return self.code_dict
-
 
 if __name__ == '__main__':
     message = "beep boop beer!"
 
-    huffman = HuffmanAlgorithm(message)
-
-    print(huffman)
+    h_tree = HuffmanTree(message)
+    h_tree.get_code()
